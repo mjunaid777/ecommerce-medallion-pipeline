@@ -6,6 +6,10 @@ Building on previous experience developing containerized Airflow and dbt pipelin
 
 ## 🏗️ Architecture & Pipeline Flow
 
+<div align="center">
+  <img src="job_pipeline_dag.png" alt="Databricks Workflow DAG" width="800"/>
+  <p><em>Automated Databricks Workflow orchestrating the Medallion pipeline</em></p>
+</div>
 The pipeline handles raw CSV ingestion from AWS S3, cleanses data anomalies (e.g., messy string dates, null quantities), and performs complex incremental recalculations.
 
 *   **🥉 Bronze Layer (Landing & Staging):** Ingests raw wildcard CSVs from the AWS S3 landing zone. Appends full history to a master table while isolating daily incremental files into a `staging_orders` table to prevent full-table rescans. 
