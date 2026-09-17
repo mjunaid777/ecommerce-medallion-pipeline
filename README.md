@@ -25,23 +25,25 @@ The pipeline handles raw CSV ingestion from AWS S3, cleanses data anomalies (e.g
 *   **Visualization:** Databricks Dashboards, Databricks Genie
 
 ## 📁 Repository Structure
-*   `generate_incremental_orders.py` - Local script to generate mock anomalous CSV data.
-*   `notebooks/`
-    *   `1_setup_and_utilities.py` - Schema definitions and path configurations.
-    *   `2_bronze_ingestion.py` - Raw data load and metadata capture.
-    *   `3_silver_transformations.py` - Data cleansing and upserts.
-    *   `4_gold_aggregation.py` - Fact generation and monthly roll-ups.
-    *   `5_incremental_fact_orders.py` - The isolated staging logic for daily loads.
-*   `dashboards/`
-    *   `ecommerce_dashboard.lvdash.json` - Exported dashboard configuration.
-    *   `dashboard_preview.pdf` - Visual export of the BI deliverables.
+*   `2_dimension_data_processing/`
+    *   `1_customer_data_processing.ipynb` - Cleanses and conforms customer attributes.
+    *   `2_products_data_processing.ipynb` - Structures the product hierarchy (division, category, variant).
+    *   `3_pricing_data_processing.ipynb` - Processes historical gross pricing data.
+*   `3_fact_data_processing/`
+    *   `4_full_load_fact.ipynb` - Generates the initial historical fact table and monthly roll-ups.
+    *   `5_incremental_fact_orders.ipynb` - Handles isolated staging and daily incremental upserts.
+*   `setup_1/` - Contains schema definitions and initial path configurations.
+*   `PC_Hardware_insights 2026-09-1...` - Visual export of the Databricks dashboard.
+*   `PC_Hardware_insights.lvdash.json` - Exported dashboard configuration for version control.
+*   `README.md` - Project documentation.
+*   `job_pipeline_dag.png` - Automated Databricks Workflow DAG execution graph.
 
 ## 🚀 How to Run the Pipeline
-1.  Upload the initial historical CSV files to your designated `s3://.../orders/landing/` path.
-2.  Execute the notebooks in sequence (Bronze → Silver → Gold) to establish the baseline tables.
-3.  Run `generate_incremental_orders.py` locally to generate new daily files and upload them to S3.
-4.  Trigger the automated **Databricks Workflow Job** to process the incremental files through the staging logic, update the Gold facts, and automatically move the raw CSVs to the `processed/` directory.
+1.  Upload the extracted historical CSV files to your designated `s3://.../orders/landing/` path.
+2.  Execute the notebooks in the `2_dimension_data_processing/` folder to build the foundational dimension tables.
+3.  Run `4_full_load_fact.ipynb` to establish the baseline Gold fact tables.
+4.  Once new extracted daily data is deposited into the S3 landing zone, trigger the automated **Databricks Workflow Job**. This orchestrates the dependencies, runs `5_incremental_fact_orders.ipynb` to process the new records, updates the Gold facts, and automatically moves the raw CSVs to the `processed/` directory.
 
 ---
-**Author:** Muheeb Khan  
+**Author:** Syed Junaid 
 *Based in Bengaluru, India | Specializing in Data Engineering, AI/ML Integrations, and Analytics.*
